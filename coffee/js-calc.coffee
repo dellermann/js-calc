@@ -35,14 +35,24 @@ class Calculator
   $ = jQuery
 
 
+  #-- Instance variables ------------------------
+  
+  DEFAULT_OPTIONS =
+    point: '.'
+
+
   #-- Constructor -------------------------------
   
-  constructor: (element) ->
+  # Creates a new calculator within the given element.
+  #
+  # @param [Element] element  the given container element
+  # @param [Object] options   any options that overwrite the default options
+  #
+  constructor: (element, options = {}) ->
     @$element = $el = $(element)
+    @options = $.extend {}, DEFAULT_OPTIONS, options
+
     @input = new Input()
-    @point = ','
-    @pointEntered = false
-    @minus = false
     @stack = new Stack()
 
     @_renderTemplate()
@@ -53,14 +63,14 @@ class Calculator
   _allClear: ->
     @stack.clear()
     @input.clear()
-    @_updateDisplay()
+    @_displayInput()
 
   _calcSquare: ->
     stack = @stack
     x = stack.pop()
     x *= x
     stack.push x
-    @_output x
+    @_displayOutput x
 
   # Deletes the last character from input.
   #
@@ -68,7 +78,46 @@ class Calculator
   #
   _deleteLastChar: ->
     @input.deleteLastChar()
-    @_updateDisplay()
+    @_displayInput()
+
+  # Displays the current input.
+  #
+  # @private
+  #
+  _displayInput: ->
+    input = @input
+    @stack.setTop input.toNumber()
+    @_displayValue input.input, input.negative
+
+  # Displays the given numeric value.
+  #
+  # @param [Number] value the value that should be displayed
+  # @private
+  #
+  _displayOutput: (value) ->
+    negative = false
+    if value < 0
+      negative = true
+      value *= -1
+    @_displayValue String(value), negative
+
+  # Displays the given value with optional negative flag.
+  #
+  # @param [String] value     the value that should be displayed
+  # @param [Boolean] negative `true` if the value is negative; `false` otherwise
+  # @private
+  #
+  _displayValue: (value, negative) ->
+    value = '0' if value is ''
+    value += '.' if value.indexOf('.') < 0
+    value = value.replace /\./, @options.point
+    @$element.find('.jscalc-display')
+      .find('output')
+        .text(value)
+      .end()
+      .find('.jscalc-sign')
+        .toggleClass('active', negative)
+    return
 
   # Enters the given digit.
   #
@@ -77,7 +126,7 @@ class Calculator
   #
   _enterDigit: (digit) ->
     @input.addDigit digit
-    @_updateDisplay()
+    @_displayInput()
 
   # Enters a decimal point if not already done.
   #
@@ -85,8 +134,14 @@ class Calculator
   #
   _enterPoint: ->
     @input.addPoint()
-    @_updateDisplay()
+    @_displayInput()
 
+  # Called if the user clicks a key on the calculator's keyboard.
+  #
+  # @param [Event] event  any event data
+  # @return [Boolean]     always `false` to prevent event bubbling
+  # @private
+  #
   _onClickKey: (event) ->
     $target = $(event.currentTarget)
 
@@ -105,10 +160,7 @@ class Calculator
       when 'x^2'
         @_calcSquare()
 
-  _output: (value) ->
-    @minus = value < 0
-    output = String(Math.abs(value)).replace /\./, @point
-    @_updateDisplay output
+    false
 
   # Renders the Handlebars template that displays the calculator.
   #
@@ -116,10 +168,11 @@ class Calculator
   #
   _renderTemplate: ->
     html = Handlebars.templates['js-calc']
-      point: @point
+      point: @options.point
     @$element.empty()
       .html(html)
-      .on('click', '.key', (event) => @_onClickKey event)
+      .on('click', '.jscalc-key', (event) => @_onClickKey event)
+    @_displayInput()
 
   # Toggles the sign (plus/minus) of the input.
   #
@@ -127,22 +180,7 @@ class Calculator
   #
   _toggleSign: ->
     @input.toggleNegative()
-    @_updateDisplay()
-
-  _updateDisplay: ->
-    input += @point unless @pointEntered
-    @$element.find('.display')
-      .find('output')
-        .text(input)
-      .end()
-      .find('.sign')
-        .text(if @minus then '—' else '')
-    @_updateInputRegister input
-
-  _updateInputRegister: (input) ->
-    value = parseFloat(input.replace @point, '.')
-    value *= -1 if @minus
-    @stack.setTop value
+    @_displayInput()
 
 
 Plugin = (option) ->

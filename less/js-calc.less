@@ -37,6 +37,13 @@
   position: relative;
   text-align: right;
 
+  span {
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+    }
+  }
   output {
     font-size: @jscalc-display-font-size;
     padding: 0;
