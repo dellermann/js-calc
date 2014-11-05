@@ -95,7 +95,7 @@ class Calculator
   _calcMultDiv: (mult) ->
     opStack = @opStack
     op = opStack.peek()
-    @_calcResult() unless opStack.isEmpty() or op is '+' or op is '-'
+    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 1
     @_calcBaseOp if mult then '*' else '/'
 
   # Performs either an addition or subtraction.
@@ -106,6 +106,16 @@ class Calculator
   _calcPlusMinus: (plus) ->
     @_calcResult() unless @opStack.isEmpty()
     @_calcBaseOp if plus then '+' else '-'
+
+  # Calculates the power of register X2 and X1.
+  #
+  # @private
+  #
+  _calcPower: ->
+    opStack = @opStack
+    op = opStack.peek()
+    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
+    @_calcBaseOp '^'
 
   # Calculates the result of a binary operation.  The method processes all
   # operators stored on the operator stack and displays the result.
@@ -124,17 +134,21 @@ class Calculator
         when '-' then res = x2 - x1
         when '*' then res = x2 * x1
         when '/' then res = x2 / x1
+        when '^' then res = x2 ** x1
+        when 'root' then res = Math.pow(x2, 1 / x1)
       stack.push res
 
     @_displayOutput stack.peek()
 
-  # Clears the input register.
+  # Calculates the n-th root of register X2, where n = register X1.
   #
   # @private
   #
-  _clearInput: ->
-    @input.clear()
-    @_displayInput()
+  _calcRoot: ->
+    opStack = @opStack
+    op = opStack.peek()
+    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
+    @_calcBaseOp 'root'
 
   # Computes an unary operation using the given operator function.
   #
@@ -147,6 +161,14 @@ class Calculator
     x1 = func x1
     stack.push x1
     @_displayOutput x1
+
+  # Clears the input register.
+  #
+  # @private
+  #
+  _clearInput: ->
+    @input.clear()
+    @_displayInput()
 
   # Deletes the last character from input.
   #
@@ -226,6 +248,19 @@ class Calculator
   _enterPoint: ->
     @input.addPoint()
     @_displayInput()
+
+  # Gets the priority of the given binary operator.
+  # 
+  # @param [String] op  the given binary operator
+  # @return [Number]    the priority
+  # @private
+  # 
+  _getOperatorPriority: (op) ->
+    switch op
+      when '+', '-' then return 0
+      when '*', '/' then return 1
+      when '^', 'root' then return 2
+      else return `undefined`
   
   # Checks whether the given value represents a calculation error.
   #
@@ -306,6 +341,10 @@ class Calculator
           @_calcUnaryOp (x1) -> x1 * x1
         when 'sqrt'
           @_calcUnaryOp (x1) -> Math.sqrt x1
+        when '^'
+          @_calcPower()
+        when 'root'
+          @_calcRoot()
         when '1/x'
           @_calcUnaryOp (x1) -> 1 / x1
         when '='
@@ -372,6 +411,8 @@ class Calculator
         @_calcUnaryOp (x1) -> x1 / 100
       when '²'
         @_calcUnaryOp (x1) -> x1 * x1
+      when '^'
+        @_calcPower()
       when '\\'
         @_calcUnaryOp (x1) -> 1 / x1
       when 'r', 'R'
