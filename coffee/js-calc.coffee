@@ -55,6 +55,7 @@ class Calculator
     @input = new Input()
     @stack = new Stack()
     @opStack = new Stack()
+    @error = false
 
     @_renderTemplate()
 
@@ -67,7 +68,9 @@ class Calculator
   #
   _allClear: ->
     @stack.clear()
+    @opStack.clear()
     @input.clear()
+    @error = false
     @_displayInput()
 
   # Calculates the given base operation (plus, minus, times, divided by).  The
@@ -124,6 +127,10 @@ class Calculator
 
     @_displayOutput stack.peek()
 
+  _clearInput: ->
+    @input.clear()
+    @_displayInput()
+
   # Computes an unary operation using the given operator function.
   #
   # @param [Function] func  the given operator function
@@ -160,10 +167,12 @@ class Calculator
   #
   _displayOutput: (value) ->
     negative = false
-    if value < 0
-      negative = true
-      value *= -1
-    @_displayValue String(value), negative
+    unless @_isError value
+      if value < 0
+        negative = true
+        value *= -1
+      value = String(value)
+    @_displayValue value, negative
 
   # Displays the given value with optional negative flag.
   #
@@ -172,7 +181,8 @@ class Calculator
   # @private
   #
   _displayValue: (value, negative) ->
-    value = '0' if value is ''
+    @error = error = @_isError value
+    value = '0' if value is '' or error
     value += '.' if value.indexOf('.') < 0
     value = value.replace /\./, @options.point
     @$element.find('.jscalc-display')
@@ -181,6 +191,9 @@ class Calculator
       .end()
       .find('.jscalc-sign')
         .toggleClass('active', negative)
+      .end()
+      .find('.jscalc-error')
+        .toggleClass('active', error)
     return
 
   # Enters the given digit.
@@ -199,6 +212,15 @@ class Calculator
   _enterPoint: ->
     @input.addPoint()
     @_displayInput()
+  
+  # Checks whether the given value represents a calculation error.
+  #
+  # @param [Number|NaN] value the value that should be checked
+  # @return [Boolean]         `true` if the given value represents an error; `false` otherwise
+  # @private
+  #
+  _isError: (value) ->
+    isNaN(value) or not isFinite(value)
 
   # Called if the user clicks a key on the calculator's keyboard.
   #
@@ -210,35 +232,38 @@ class Calculator
     $target = $(event.currentTarget)
 
     code = $target.data 'code'
-    switch code
-      when 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-        @_enterDigit code
-      when '.'
-        @_enterPoint()
-      when '+/-'
-        @_toggleSign()
-      when 'DEL'
-        @_deleteLastChar()
-      when 'AC'
-        @_allClear()
-      when '+'
-        @_calcPlusMinus true
-      when '-'
-        @_calcPlusMinus false
-      when '*'
-        @_calcMultDiv true
-      when '/'
-        @_calcMultDiv false
-      when '%'
-        @_calcUnaryOp (x1) -> x1 / 100
-      when 'x^2'
-        @_calcUnaryOp (x1) -> x1 * x1
-      when 'sqrt'
-        @_calcUnaryOp (x1) -> Math.sqrt x1
-      when '1/x'
-        @_calcUnaryOp (x1) -> 1 / x1
-      when '='
-        @_calcResult()
+    if not @error or code is 'AC'
+      switch code
+        when 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+          @_enterDigit code
+        when '.'
+          @_enterPoint()
+        when '+/-'
+          @_toggleSign()
+        when 'DEL'
+          @_deleteLastChar()
+        when 'AC'
+          @_allClear()
+        when 'CE'
+          @_clearInput()
+        when '+'
+          @_calcPlusMinus true
+        when '-'
+          @_calcPlusMinus false
+        when '*'
+          @_calcMultDiv true
+        when '/'
+          @_calcMultDiv false
+        when '%'
+          @_calcUnaryOp (x1) -> x1 / 100
+        when 'x^2'
+          @_calcUnaryOp (x1) -> x1 * x1
+        when 'sqrt'
+          @_calcUnaryOp (x1) -> Math.sqrt x1
+        when '1/x'
+          @_calcUnaryOp (x1) -> 1 / x1
+        when '='
+          @_calcResult()
 
     false
 
