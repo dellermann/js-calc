@@ -79,41 +79,52 @@
   display: table-row;
 }
 .@{prefix}-key {
-  background: @jscalc-key-bg-color;
-  border: @jscalc-key-border-width solid @jscalc-key-border-color;
-  border-radius: @jscalc-key-border-radius;
-  box-shadow: 1px 1px 2px fade(#000, 40%);
-  color: @jscalc-key-fg-color;
-  cursor: pointer;
   display: table-cell;
-  font-size: @jscalc-key-font-size;
-  height: @jscalc-key-height;
-  position: relative;
-  text-align: center;
-  vertical-align: middle;
-  width: @jscalc-key-width;
 
-  &:before {
-    border-top: @jscalc-key-border-width solid
-      lighten(@jscalc-key-border-color, 90%);
-    content: "";
-    height: 0;
-    left: (@jscalc-key-border-radius / 2);
-    position: absolute;
-    right: (@jscalc-key-border-radius / 2);
-    top: 0;
+  span {
+    background: @jscalc-key-bg-color;
+    border: @jscalc-key-border-width solid @jscalc-key-border-color;
+    border-radius: @jscalc-key-border-radius;
+    box-shadow: 1px 1px 2px fade(#000, 40%);
+    color: @jscalc-key-fg-color;
+    cursor: pointer;
+    display: block;
+    font-size: @jscalc-key-font-size;
+    height: @jscalc-key-height;
+    line-height: @jscalc-key-height;
+    position: relative;
+    text-align: center;
+    vertical-align: middle;
+    width: @jscalc-key-width;
+
+    &:before {
+      border-top: @jscalc-key-border-width solid
+        lighten(@jscalc-key-border-color, 90%);
+      content: "";
+      height: 0;
+      left: (@jscalc-key-border-radius / 2);
+      position: absolute;
+      right: (@jscalc-key-border-radius / 2);
+      top: 0;
+    }
   }
   sup {
     font-size: @jscalc-key-sup-font-size;
   }
 }
-.@{prefix}-key-erase {
+.@{prefix}-key:active span, .active span {
+  color: @jscalc-key-fg-color;
+  outline-style: none;
+  text-decoration: none;
+  top: -1px;
+}
+.@{prefix}-key-erase span {
   background: @jscalc-key-erase-bg-color;
 }
-.@{prefix}-key-memory {
+.@{prefix}-key-memory span {
   background: @jscalc-key-memory-bg-color;
 }
-.@{prefix}-key-result {
+.@{prefix}-key-result span {
   background: @jscalc-key-result-bg-color;
 }
 

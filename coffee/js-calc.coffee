@@ -367,15 +367,14 @@ class Calculator
   # @private
   #
   _onKeyDown: (event) ->
-    res = false
     code = event.which
-    console.log "#{code}"
-    switch code
-      when 46     # Del
-        @_allClear()
-      else
-        res = true
-    res
+    if code is 46
+      @$element.find(".jscalc-key[data-code='AC']")
+        .addClass('active')
+        .click()
+      false
+
+    true
 
   # Called if a key has been pressed.
   #
@@ -384,44 +383,47 @@ class Calculator
   # @private
   #
   _onKeyPress: (event) ->
-    res = false
+    keyCode = null
     code = String.fromCharCode event.which
     switch code
-      when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-        @_enterDigit parseInt(code, 10)
+      when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/', '%', '^'
+        keyCode = code
       when '.', @options.point
-        @_enterPoint()
+        keyCode = '.'
       when '#'
-        @_toggleSign()
-      when '+'
-        @_calcPlusMinus true
-      when '-'
-        @_calcPlusMinus false
-      when '*'
-        @_calcMultDiv true
-      when '/'
-        @_calcMultDiv false
+        keyCode = '+/-'
       when '\r', '='
-        @_calcResult()
+        keyCode = '='
       when '\b'
-        @_deleteLastChar()
+        keyCode = 'DEL'
       when 'c', 'C'
-        @_clearInput()
-      when '%'
-        @_calcUnaryOp (x1) -> x1 / 100
+        keyCode = 'CE'
       when '²'
-        @_calcUnaryOp (x1) -> x1 * x1
-      when '^'
-        @_calcPower()
+        keyCode = 'x^2'
       when '\\'
-        @_calcUnaryOp (x1) -> 1 / x1
+        keyCode = '1/x'
       when 'r', 'R'
-        @_memoryRecall()
+        keyCode = 'MR'
       when 's', 'S'
-        @_memorySet()
-      else
-        res = true
-    res
+        keyCode = 'MS'
+
+    if keyCode
+      @$element.find(".jscalc-key[data-code='#{keyCode}']")
+        .addClass('active')
+        .click()
+      return false
+
+    true
+
+  # Called if the user releases a key.
+  #
+  # @return [Boolean] always `true` to allow event bubbling
+  # @private
+  #
+  _onKeyUp: ->
+    @$element.find(".jscalc-key")
+      .removeClass('active')
+    true
 
   # Renders the Handlebars template that displays the calculator.
   #
@@ -435,6 +437,7 @@ class Calculator
       .on('click', '.jscalc-key', (event) => @_onClickKey event)
     $(window).on('keypress', (event) => @_onKeyPress event)
       .on('keydown', (event) => @_onKeyDown event)
+      .on('keyup', (event) => @_onKeyUp())
     @_displayInput()
 
   # Toggles the sign (plus/minus) of the input.
