@@ -42,6 +42,15 @@ class Stack
   clear: ->
     @stack = []
 
+  # Duplicates the value on top of the stack.
+  #
+  # @return [Number]  the new size of the stack
+  #
+  duplicate: ->
+    s = @stack
+    n = s.length
+    s.push s[n - 1] if n > 0
+
   # Checks whether or not the stack is empty, that is, does not contain any
   # elements.
   #

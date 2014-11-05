@@ -54,23 +54,87 @@ class Calculator
 
     @input = new Input()
     @stack = new Stack()
+    @opStack = new Stack()
 
     @_renderTemplate()
 
 
   #-- Non-public methods ------------------------
 
+  # Clear the input and the stacks.
+  #
+  # @private
+  #
   _allClear: ->
     @stack.clear()
     @input.clear()
     @_displayInput()
 
-  _calcSquare: ->
+  # Calculates the given base operation (plus, minus, times, divided by).  The
+  # method pushes the operator on the operator stack and duplicates the value
+  # on top of the operand stack.  At last, it clears the input.
+  #
+  # @param [String] op  the given base operation
+  # @private
+  #
+  _calcBaseOp: (op) ->
+    @opStack.push op
+    @stack.duplicate()
+    @input.clear()
+    return
+
+  # Performs either a multiplication or division.
+  #
+  # @param [Boolean] mult `true` to multiply; `false` to divide
+  # @private
+  #
+  _calcMultDiv: (mult) ->
+    opStack = @opStack
+    op = opStack.peek()
+    @_calcResult() unless opStack.isEmpty() or op is '+' or op is '-'
+    @_calcBaseOp if mult then '*' else '/'
+
+  # Performs either an addition or subtraction.
+  #
+  # @param [Boolean] plus `true` to add; `false` to subtract
+  # @private
+  #
+  _calcPlusMinus: (plus) ->
+    @_calcResult() unless @opStack.isEmpty()
+    @_calcBaseOp if plus then '+' else '-'
+
+  # Calculates the result of a binary operation.  The method processes all
+  # operators stored on the operator stack and displays the result.
+  #
+  # @private
+  #
+  _calcResult: ->
     stack = @stack
-    x = stack.pop()
-    x *= x
-    stack.push x
-    @_displayOutput x
+    opStack = @opStack
+    until opStack.isEmpty()
+      x1 = stack.pop()
+      x2 = stack.pop()
+      op = opStack.pop()
+      switch op
+        when '+' then res = x2 + x1
+        when '-' then res = x2 - x1
+        when '*' then res = x2 * x1
+        when '/' then res = x2 / x1
+      stack.push res
+
+    @_displayOutput stack.peek()
+
+  # Computes an unary operation using the given operator function.
+  #
+  # @param [Function] func  the given operator function
+  # @private
+  #
+  _calcUnaryOp: (func) ->
+    stack = @stack
+    x1 = stack.pop()
+    x1 = func x1
+    stack.push x1
+    @_displayOutput x1
 
   # Deletes the last character from input.
   #
@@ -157,8 +221,24 @@ class Calculator
         @_deleteLastChar()
       when 'AC'
         @_allClear()
+      when '+'
+        @_calcPlusMinus true
+      when '-'
+        @_calcPlusMinus false
+      when '*'
+        @_calcMultDiv true
+      when '/'
+        @_calcMultDiv false
+      when '%'
+        @_calcUnaryOp (x1) -> x1 / 100
       when 'x^2'
-        @_calcSquare()
+        @_calcUnaryOp (x1) -> x1 * x1
+      when 'sqrt'
+        @_calcUnaryOp (x1) -> Math.sqrt x1
+      when '1/x'
+        @_calcUnaryOp (x1) -> 1 / x1
+      when '='
+        @_calcResult()
 
     false
 
