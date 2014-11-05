@@ -321,6 +321,67 @@ class Calculator
 
     false
 
+  # Called if a key has been pressed down.
+  #
+  # @param [Event] event  any event data
+  # @return [Boolean]     a value indicating whether event bubbling should occur
+  # @private
+  #
+  _onKeyDown: (event) ->
+    res = false
+    code = event.which
+    console.log "#{code}"
+    switch code
+      when 46     # Del
+        @_allClear()
+      else
+        res = true
+    res
+
+  # Called if a key has been pressed.
+  #
+  # @param [Event] event  any event data
+  # @return [Boolean]     a value indicating whether event bubbling should occur
+  # @private
+  #
+  _onKeyPress: (event) ->
+    res = false
+    code = String.fromCharCode event.which
+    switch code
+      when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+        @_enterDigit parseInt(code, 10)
+      when '.', @options.point
+        @_enterPoint()
+      when '#'
+        @_toggleSign()
+      when '+'
+        @_calcPlusMinus true
+      when '-'
+        @_calcPlusMinus false
+      when '*'
+        @_calcMultDiv true
+      when '/'
+        @_calcMultDiv false
+      when '\r', '='
+        @_calcResult()
+      when '\b'
+        @_deleteLastChar()
+      when 'c', 'C'
+        @_clearInput()
+      when '%'
+        @_calcUnaryOp (x1) -> x1 / 100
+      when '²'
+        @_calcUnaryOp (x1) -> x1 * x1
+      when '\\'
+        @_calcUnaryOp (x1) -> 1 / x1
+      when 'r', 'R'
+        @_memoryRecall()
+      when 's', 'S'
+        @_memorySet()
+      else
+        res = true
+    res
+
   # Renders the Handlebars template that displays the calculator.
   #
   # @private
@@ -331,6 +392,8 @@ class Calculator
     @$element.empty()
       .html(html)
       .on('click', '.jscalc-key', (event) => @_onClickKey event)
+    $(window).on('keypress', (event) => @_onKeyPress event)
+      .on('keydown', (event) => @_onKeyDown event)
     @_displayInput()
 
   # Toggles the sign (plus/minus) of the input.
