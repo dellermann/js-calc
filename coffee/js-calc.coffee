@@ -56,6 +56,7 @@ class Calculator
     @stack = new Stack()
     @opStack = new Stack()
     @error = false
+    @memory = 0
 
     @_renderTemplate()
 
@@ -127,6 +128,10 @@ class Calculator
 
     @_displayOutput stack.peek()
 
+  # Clears the input register.
+  #
+  # @private
+  #
   _clearInput: ->
     @input.clear()
     @_displayInput()
@@ -159,6 +164,14 @@ class Calculator
     input = @input
     @stack.setTop input.toNumber()
     @_displayValue input.input, input.negative
+
+  # Shows or hides the memory indicator in the display.
+  #
+  # @private
+  #
+  _displayMemory: ->
+    @$element.find('.jscalc-display .jscalc-memory')
+      .toggleClass('active', @memory isnt 0)
 
   # Displays the given numeric value.
   #
@@ -194,6 +207,7 @@ class Calculator
       .end()
       .find('.jscalc-error')
         .toggleClass('active', error)
+    @_displayMemory()
     return
 
   # Enters the given digit.
@@ -221,6 +235,38 @@ class Calculator
   #
   _isError: (value) ->
     isNaN(value) or not isFinite(value)
+
+  # Clears the value in memory.
+  #
+  # @private
+  #
+  _memoryClear: ->
+    @memory = 0
+    @_displayMemory()
+
+  # Adds register X1 to memory.
+  #
+  # @private
+  #
+  _memoryPlus: ->
+    @memory += @stack.peek()
+    @_displayMemory()
+
+  # Replaces the current input by the value of memory.
+  #
+  # @private
+  #
+  _memoryRecall: ->
+    @input.setNumber @memory
+    @_displayInput()
+
+  # Stores register X1 to memory.
+  #
+  # @private
+  #
+  _memorySet: ->
+    @memory = @stack.peek()
+    @_displayMemory()
 
   # Called if the user clicks a key on the calculator's keyboard.
   #
@@ -264,6 +310,14 @@ class Calculator
           @_calcUnaryOp (x1) -> 1 / x1
         when '='
           @_calcResult()
+        when 'MR'
+          @_memoryRecall()
+        when 'MS'
+          @_memorySet()
+        when 'M+'
+          @_memoryPlus()
+        when 'MC'
+          @_memoryClear()
 
     false
 

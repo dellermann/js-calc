@@ -74,6 +74,24 @@ class Input
     @input = input.substring(0, n - 1) if n > 0
     this
 
+  # Sets the input to the given number.
+  #
+  # @param [Number] number  the given number
+  # @return [Input]         this instance for method chaining
+  #
+  setNumber: (number) ->
+    if number is 0
+      @input = ''
+      @negative = false
+    else
+      negative = false
+      if number < 0
+        negative = true
+        number *= -1
+      @input = String(number)
+      @negative = negative
+    this
+
   # Toggles the negative flag.  If the input is empty the flag is unchanged.
   #
   # @return [Boolean] the new state of the negative flag
@@ -86,7 +104,9 @@ class Input
   # @return [Number]  the numeric representation of the input
   #
   toNumber: ->
-    value = parseFloat @input
+    input = @input
+    input = 0 if input is ''
+    value = parseFloat input
     value *= -1 if @negative
     value
 

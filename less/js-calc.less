@@ -38,24 +38,35 @@
   text-align: right;
 
   span {
+    font-size: @jscalc-display-indicator-font-size;
+    left: (@jscalc-display-padding / 2);
+    line-height: 100%;
+    position: absolute;
     visibility: hidden;
 
     &.active {
       visibility: visible;
     }
   }
+  .@{prefix}-sign {
+    font-size: @jscalc-display-font-size;
+    height: 1em;
+    line-height: 1em;
+    left: (@jscalc-display-padding / 2);
+    position: absolute;
+    top: @jscalc-display-padding;
+  }
+  .@{prefix}-memory {
+    top: (@jscalc-display-padding / 2);
+  }
+  .@{prefix}-error {
+    bottom: (@jscalc-display-padding / 2);
+  }
   output {
     font-size: @jscalc-display-font-size;
+    line-height: 100%;
     padding: 0;
   }
-}
-.@{prefix}-sign {
-  font-size: @jscalc-display-font-size;
-  height: 1em;
-  line-height: 1em;
-  left: .2em;
-  position: absolute;
-  top: .4em;
 }
 
 // Keyboard
