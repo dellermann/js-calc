@@ -12,3 +12,9 @@ Then execute
 
     grunt
 
+## License
+
+This piece of software was released under the [MIT License][MIT].
+
+[MIT]: http://opensource.org/licenses/MIT
+
