@@ -1,0 +1,27 @@
+{
+  "name": "js-calc",
+  "version": "0.9.2",
+  "homepage": "https://github.com/dellermann/js-calc",
+  "authors": [
+    "Daniel Ellermann <d.ellermann@amc-world.de>"
+  ],
+  "description": "A JavaScript calculator.",
+  "main": "coffee/js-calc.coffee",
+  "keywords": [
+    "calculator",
+    "client",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "handlebars": "~2.0.0",
+    "bootstrap": "~3.3.0"
+  }
+}
