@@ -100,7 +100,7 @@ class Calculator
   _calcMultDiv: (mult) ->
     opStack = @opStack
     op = opStack.peek()
-    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 1
+    @_operate() unless opStack.isEmpty() or @_getOperatorPriority(op) < 1
     @_calcBaseOp if mult then '*' else '/'
 
   # Performs either an addition or subtraction.
@@ -109,7 +109,7 @@ class Calculator
   # @private
   #
   _calcPlusMinus: (plus) ->
-    @_calcResult() unless @opStack.isEmpty()
+    @_operate() unless @opStack.isEmpty()
     @_calcBaseOp if plus then '+' else '-'
 
   # Calculates the power of register X2 and X1.
@@ -119,7 +119,7 @@ class Calculator
   _calcPower: ->
     opStack = @opStack
     op = opStack.peek()
-    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
+    @_operate() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
     @_calcBaseOp '^'
 
   # Calculates the result of a binary operation.  The method processes all
@@ -128,6 +128,14 @@ class Calculator
   # @private
   #
   _calcResult: ->
+    @_operate()
+    @input.clear()
+
+  # Calculates all operations which are currently on the stack.
+  #
+  # @private
+  #
+  _operate: ->
     stack = @stack
     opStack = @opStack
     until opStack.isEmpty()
@@ -152,7 +160,7 @@ class Calculator
   _calcRoot: ->
     opStack = @opStack
     op = opStack.peek()
-    @_calcResult() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
+    @_operate() unless opStack.isEmpty() or @_getOperatorPriority(op) < 2
     @_calcBaseOp 'root'
 
   # Computes an unary operation using the given operator function.
