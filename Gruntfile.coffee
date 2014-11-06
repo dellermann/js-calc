@@ -8,6 +8,10 @@ banner = '''
 
 module.exports = (grunt) ->
   grunt.initConfig
+    bower:
+      demo:
+        options:
+          targetDir: '<%= dirs.bower.base %>/'
     clean:
       build: ['<%= dirs.target.build.base %>']
       demo: ['<%= dirs.target.demo.base %>']
@@ -158,6 +162,7 @@ module.exports = (grunt) ->
         files: ['<%= dirs.src.less %>/*.less']
         tasks: ['less']
 
+  grunt.loadNpmTasks 'grunt-bower-task'
   grunt.loadNpmTasks 'grunt-codo'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
@@ -174,7 +179,8 @@ module.exports = (grunt) ->
     'uglify:build', 'copy:build', 'markdown:build', 'docs'
   ]
   grunt.registerTask 'demo', [
-    'clean:demo', 'less:demo', 'coffee:demo', 'handlebars:demo', 'copy:demo'
+    'bower:demo', 'clean:demo', 'less:demo', 'coffee:demo', 'handlebars:demo',
+    'copy:demo'
   ]
   grunt.registerTask 'docs', ['clean:docs', 'codo:docs', 'markdown:docs']
 

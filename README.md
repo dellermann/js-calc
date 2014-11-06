@@ -70,19 +70,13 @@ To build and view a demo perform the following steps:
     $ npm install
     ```
 
-2.  Install needed Bower components using
-
-    ```shell
-    $ bower install
-    ```
-
-3.  Build the demo page using
+2.  Build the demo page using
 
     ```shell
     $ grunt demo
     ```
 
-4.  View `demo.html` in folder `target/demo` using your favorite browser.
+3.  View `demo.html` in folder `target/demo` using your favorite browser.
 
 ## Customization
 
