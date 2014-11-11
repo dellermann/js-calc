@@ -121,6 +121,12 @@ module.exports = (grunt) ->
             '<%= dirs.src.less %>/js-calc.less'
         options:
           banner: banner
+      buildMin:
+        files:
+          '<%= dirs.target.build.css %>/js-calc.min.css':
+            '<%= dirs.src.less %>/js-calc.less'
+        options:
+          banner: banner
           cleancss: true
           report: true
       demo:
@@ -175,8 +181,8 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-markdown'
 
   grunt.registerTask 'default', [
-    'clean:build', 'less:build', 'coffee:build', 'handlebars:build',
-    'uglify:build', 'copy:build', 'markdown:build', 'docs'
+    'clean:build', 'less:build', 'less:buildMin', 'coffee:build',
+    'handlebars:build', 'uglify:build', 'copy:build', 'markdown:build', 'docs'
   ]
   grunt.registerTask 'demo', [
     'bower:demo', 'clean:demo', 'less:demo', 'coffee:demo', 'handlebars:demo',
