@@ -77,7 +77,9 @@ class Input
   deleteLastChar: ->
     input = @input
     n = input.length
-    @input = input.substring(0, n - 1) if n > 0
+    input = input.substring(0, n - 1) if n > 0
+    input = '' if input is '0'
+    @input = input
     this
 
   # Sets the input to the given number.
