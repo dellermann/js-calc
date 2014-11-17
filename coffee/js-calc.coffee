@@ -221,7 +221,8 @@ class Calculator
       if value < 0
         negative = true
         value *= -1
-      value = String(value)
+      # bugfix #2
+      value = String(parseFloat(value.toPrecision Input.MAX_INPUT_LENGTH))
     @_displayValue value, negative
 
   # Displays the given value with optional negative flag.

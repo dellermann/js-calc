@@ -25,9 +25,11 @@
 
 class Input
 
-  #-- Constants ---------------------------------
+  #-- Class variables ---------------------------
 
-  MAX_INPUT_LENGTH = 15
+  # The maximum number of characters that may be entered.
+  #
+  @MAX_INPUT_LENGTH: 15
 
 
   #-- Constructor -------------------------------
@@ -47,7 +49,7 @@ class Input
   #
   addDigit: (digit) ->
     input = @input
-    @input = input + digit if input.length <= MAX_INPUT_LENGTH
+    @input = input + digit if input.length <= Input.MAX_INPUT_LENGTH
     this
 
   # Adds a decimal point to the input.  The decimal point is added if not
