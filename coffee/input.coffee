@@ -57,6 +57,7 @@ class Input
   #
   addPoint: ->
     input = @input
+    input = '0' unless input
     @input = input + '.' if input.indexOf('.') < 0
     this
 
