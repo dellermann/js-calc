@@ -11,12 +11,20 @@ In order to use js-calc add a HTML container element, e. g.
 <div class="calculator"></div>
 ```
 
+Then load the CSS file (optionally use the minified version):
+
+```html
+<link rel="stylesheet" href="css/js-calc.min.css" />
+```
+
+Alternatively, you can import the LESS files in your LESS code.
+
 Add `<script></script>` tags to load jQuery and js-calc (optionally use the
 minified versions):
 
 ```html
 <script src="jquery.min.js"></script>
-<script src="js-calc.min.js"></script>
+<script src="js/js-calc.min.js"></script>
 ```
 
 Then call the following code in JavaScript:

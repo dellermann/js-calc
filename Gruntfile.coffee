@@ -20,21 +20,21 @@ module.exports = (grunt) ->
       docs:
         dest: '<%= dirs.target.docs %>/api/'
         options:
-          name: 'js-calc'
-          title: 'js-calc API documentation'
+          name: '<%= pkg.name %>'
+          title: '<%= pkg.name %> API documentation'
         src: ['<%= dirs.src.coffee %>']
     coffee:
       build:
         files:
-          '<%= dirs.target.build.js %>/js-calc.js': [
-            '<%= dirs.src.coffee %>/js-calc.coffee'
+          '<%= dirs.target.build.js %>/<%= pkg.name %>.js': [
+            '<%= dirs.src.coffee %>/<%= pkg.name %>.coffee'
             '<%= dirs.src.coffee %>/stack.coffee'
             '<%= dirs.src.coffee %>/input.coffee'
           ]
       demo:
         files:
-          '<%= dirs.target.demo.js %>/js-calc.js': [
-            '<%= dirs.src.coffee %>/js-calc.coffee'
+          '<%= dirs.target.demo.js %>/<%= pkg.name %>.js': [
+            '<%= dirs.src.coffee %>/<%= pkg.name %>.coffee'
             '<%= dirs.src.coffee %>/stack.coffee'
             '<%= dirs.src.coffee %>/input.coffee'
           ]
@@ -117,24 +117,24 @@ module.exports = (grunt) ->
     less:
       build:
         files:
-          '<%= dirs.target.build.css %>/js-calc.css':
-            '<%= dirs.src.less %>/js-calc.less'
+          '<%= dirs.target.build.css %>/<%= pkg.name %>.css':
+            '<%= dirs.src.less %>/<%= pkg.name %>.less'
         options:
           banner: banner
       buildMin:
         files:
-          '<%= dirs.target.build.css %>/js-calc.min.css':
-            '<%= dirs.src.less %>/js-calc.less'
+          '<%= dirs.target.build.css %>/<%= pkg.name %>.min.css':
+            '<%= dirs.src.less %>/<%= pkg.name %>.less'
         options:
           banner: banner
           cleancss: true
           report: true
       demo:
         files:
-          '<%= dirs.target.demo.css %>/js-calc.css':
-            '<%= dirs.src.less %>/js-calc.less'
+          '<%= dirs.target.demo.css %>/<%= pkg.name %>.css':
+            '<%= dirs.src.less %>/<%= pkg.name %>.less'
       options:
-        path: '<%= dirs.src.less %>/'
+        paths: '<%= dirs.src.less %>/'
     markdown:
       build:
         files:
@@ -152,10 +152,10 @@ module.exports = (grunt) ->
     uglify:
       build:
         files:
-          '<%= dirs.target.build.js %>/js-calc.min.js':
-            '<%= dirs.target.build.js %>/js-calc.js'
-          '<%= dirs.target.build.js %>/templates/js-calc.min.js':
-            '<%= dirs.target.build.js %>/templates/js-calc.js'
+          '<%= dirs.target.build.js %>/<%= pkg.name %>.min.js':
+            '<%= dirs.target.build.js %>/<%= pkg.name %>.js'
+          '<%= dirs.target.build.js %>/templates/<%= pkg.name %>.min.js':
+            '<%= dirs.target.build.js %>/templates/<%= pkg.name %>.js'
         options:
           banner: banner
           sourceMap: true
@@ -164,6 +164,9 @@ module.exports = (grunt) ->
       coffee:
         files: ['<%= dirs.src.coffee %>/*.coffee']
         tasks: ['coffee']
+      handlebars:
+        files: ['<%= dirs.src.templates %>/*.hbs']
+        tasks: ['handlebars']
       less:
         files: ['<%= dirs.src.less %>/*.less']
         tasks: ['less']
