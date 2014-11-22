@@ -427,7 +427,7 @@ class Calculator
       @$element.find(".jscalc-key[data-code='#{keyCode}']")
         .addClass('active')
         .click()
-      return false
+      event.stopPropagation()
 
     true
 
