@@ -1,6 +1,6 @@
 {
   "name": "js-calc",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "homepage": "https://github.com/dellermann/js-calc",
   "authors": [
     "Daniel Ellermann <d.ellermann@amc-world.de>"
@@ -24,7 +24,7 @@
     "tests"
   ],
   "dependencies": {
-    "handlebars": "~2.0.0",
+    "handlebars": "~3.0.3",
     "bootstrap": "~3.3.6"
   }
 }
